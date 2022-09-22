@@ -21,4 +21,6 @@ from banking_api import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', views.account_list),
+    path('customers/', views.customer_list),
+
 ]
