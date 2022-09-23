@@ -15,12 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from banking_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', views.account_list),
+    path('accounts/<int:id>/balance', views.account_balance),
+    path('accounts/<int:id>/transfers', views.account_transfers),
     path('customers/', views.customer_list),
-    path('transfers/', views.transfer_list)
+    path('transfers/', views.transfer_list) 
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)

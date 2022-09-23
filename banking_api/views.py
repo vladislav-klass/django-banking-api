@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -37,6 +38,31 @@ def customer_list(request, format=None):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def account_balance(request, id, format=None):
+    try:
+        account = Account.objects.get(pk=id)
+    except Account.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # data = request.GET.get()
+    if request.method == 'GET':
+        serializer = AccountSerializer(account)
+        return Response(serializer.data['balance'])
+
+@api_view(['GET'])
+def account_transfers(request, id, format=None):
+    try:
+        account = Account.objects.get(pk=id)
+    except Account.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        transfers = Transfer.objects.filter(Q(sender_id=id) | Q(recipient_id=id))
+        serializer = TransferSerializer(transfers, many=True)
+        return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])
