@@ -22,4 +22,17 @@ class AccountSerializer(serializers.ModelSerializer):
 class TransferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transfer
-        fields = ['id', 'date_time', "sender_id", "recipient_id", "amount"]
+        fields = ['id', 'date_time', "sender_account_id", "recipient_account_id", "amount"]
+
+
+# class ProjectView(mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+
+#     permission_classes = [permissions.IsAuthenticated, ] 
+#     serializer_class = ProjectSerializer
+#     queryset = Project.objects.all()
+
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)

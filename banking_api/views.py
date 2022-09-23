@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.db.models import Q
 from django.http import JsonResponse
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -11,6 +12,7 @@ from .serializers import (AccountSerializer, CustomerSerializer,
                           TransferSerializer)
 
 
+@swagger_auto_schema(method='POST', request_body=AccountSerializer)
 @api_view(['GET', 'POST'])
 def account_list(request, format=None):
 
@@ -25,6 +27,7 @@ def account_list(request, format=None):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+@swagger_auto_schema(method='POST', request_body=CustomerSerializer)
 @api_view(['GET', 'POST'])
 def customer_list(request, format=None):
 
@@ -64,7 +67,7 @@ def account_transfers(request, id, format=None):
         serializer = TransferSerializer(transfers, many=True)
         return Response(serializer.data)
 
-
+@swagger_auto_schema(method='POST', request_body=TransferSerializer)
 @api_view(['GET', 'POST'])
 def transfer_list(request, format=None):
 
@@ -77,21 +80,21 @@ def transfer_list(request, format=None):
         # validate input data
         data=request.data
         try:
-            sender_id = data['sender_id']
-            recipient_id = data['recipient_id']
+            sender_account_id = data['sender_account_id']
+            recipient_account_id = data['recipient_account_id']
             amount = data['amount'] 
         except:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            sender = Account.objects.get(pk=sender_id)
-            recipient = Account.objects.get(pk=recipient_id)
+            sender = Account.objects.get(pk=sender_account_id)
+            recipient = Account.objects.get(pk=recipient_account_id)
         except Account.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         # calculate new balances
-        sender.balance = Decimal("{:.2f}".format(float(sender.balance) - amount))
-        recipient.balance = Decimal("{:.2f}".format(float(recipient.balance) + amount))
+        sender.balance = Decimal("{:.2f}".format(float(sender.balance) - float(amount)))
+        recipient.balance = Decimal("{:.2f}".format(float(recipient.balance) + float(amount)))
 
         # update database
         sender_serializer = AccountSerializer(instance = sender, data={'balance':sender.balance})
