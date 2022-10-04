@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.db.models import Q
 from django.http import JsonResponse
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -12,7 +13,8 @@ from .serializers import (AccountSerializer, CustomerSerializer,
                           TransferSerializer)
 
 
-@swagger_auto_schema(method='POST', request_body=AccountSerializer)
+@swagger_auto_schema(method='GET', operation_description="Retrieve list of accounts.")
+@swagger_auto_schema(method='POST', request_body=AccountSerializer, operation_description="Create a new account (POST)")
 @api_view(['GET', 'POST'])
 def account_list(request, format=None):
 
@@ -27,7 +29,8 @@ def account_list(request, format=None):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@swagger_auto_schema(method='POST', request_body=CustomerSerializer)
+@swagger_auto_schema(method='GET', operation_description="Retrieve list of customers.")
+@swagger_auto_schema(method='POST', request_body=CustomerSerializer, operation_description="Create a new customer")
 @api_view(['GET', 'POST'])
 def customer_list(request, format=None):
 
@@ -42,7 +45,7 @@ def customer_list(request, format=None):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
+@swagger_auto_schema(method='GET', operation_description="Retrieve the balance for an account.")
 @api_view(['GET'])
 def account_balance(request, id, format=None):
     try:
@@ -55,6 +58,7 @@ def account_balance(request, id, format=None):
         serializer = AccountSerializer(account)
         return Response(serializer.data['balance'])
 
+@swagger_auto_schema(method='GET', operation_description="Retrieve all transfers for one account.")
 @api_view(['GET'])
 def account_transfers(request, id, format=None):
     try:
@@ -67,7 +71,8 @@ def account_transfers(request, id, format=None):
         serializer = TransferSerializer(transfers, many=True)
         return Response(serializer.data)
 
-@swagger_auto_schema(method='POST', request_body=TransferSerializer)
+@swagger_auto_schema(method='GET', operation_description="Retrieve all transfers of the bank.")
+@swagger_auto_schema(method='POST', request_body=TransferSerializer, operation_description="Transfer money between two accounts.")
 @api_view(['GET', 'POST'])
 def transfer_list(request, format=None):
 
@@ -93,7 +98,7 @@ def transfer_list(request, format=None):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         # calculate new balances
-        sender.balance = Decimal("{:.2f}".format(float(sender.balance) - float(amount)))
+        sender.balance = format(sender.balance - Decimal(amount))
         recipient.balance = Decimal("{:.2f}".format(float(recipient.balance) + float(amount)))
 
         # update database

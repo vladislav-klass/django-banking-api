@@ -24,9 +24,19 @@ from banking_api import views
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Entrix Banking API",
+      title="Banking API",
       default_version='v1',
-      description="This is the entrix banking API",
+      description="""This is a internal API for a exemplary financial institution implmented in Python and Django.  
+
+While modern banks have evolved to serve a plethora of functions, at their core, banks must provide certain basic features. This repository implements the basic HTTP API for employees of one of those banks! It could ultimately be consumed by multiple frontends (web, iOS, Android etc).
+
+There are API routes implemented that allow bank employees to:
+  - Create a new bank account for a customer, with an initial deposit amount. A
+    single customer may have multiple bank accounts.
+  - Transfer amounts between any two accounts, including those owned by
+    different customers.
+  - Retrieve balances for a given account.
+  - Retrieve transfer history for a given account.""",
     #   terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="vladislavklass@web.de"),
       license=openapi.License(name="Test License"),
