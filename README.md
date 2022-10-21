@@ -1,5 +1,3 @@
-### Objective
-
 This is an internal API for an exemplary financial institution implemented in Python and Django. Use the Swagger UI to interact with the API calls intuitively.
 
 ### Brief
@@ -18,7 +16,10 @@ There are API routes implemented that allow bank employees to:
 ### Getting started
 
 1. create and activate a virtual environment
+`cd my-project`
+`virtualenv --python python3.6 venv`
 2. install the requirements
+`pip install -r requirements.txt`
 3. Start the django server by executing
   `python manage.py runserver`
 
